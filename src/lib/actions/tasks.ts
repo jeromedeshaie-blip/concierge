@@ -58,6 +58,65 @@ export async function createTask(formData: FormData) {
   redirect("/dashboard/tasks");
 }
 
+export async function updateTask(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const taskId = (formData.get("task_id") as string)?.trim();
+  const property_id = (formData.get("property_id") as string)?.trim();
+  const type = (formData.get("type") as string)?.trim();
+  const title = (formData.get("title") as string)?.trim();
+
+  if (!taskId || !property_id || !type || !title) {
+    redirect(
+      `/dashboard/tasks/${taskId}?error=` +
+        encodeURIComponent("Propriété, type et titre sont obligatoires.")
+    );
+  }
+
+  const booking_id =
+    (formData.get("booking_id") as string)?.trim() || null;
+  const assigned_to =
+    (formData.get("assigned_to") as string)?.trim() || null;
+  const description =
+    (formData.get("description") as string)?.trim() || null;
+  const due_date =
+    (formData.get("due_date") as string)?.trim() || null;
+  const priority = (formData.get("priority") as string) || "medium";
+  const status = (formData.get("status") as string) || "pending";
+
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      property_id,
+      booking_id,
+      assigned_to,
+      type,
+      status,
+      priority,
+      title,
+      description,
+      due_date: due_date || null,
+    })
+    .eq("id", taskId);
+
+  if (error) {
+    redirect(
+      `/dashboard/tasks/${taskId}?error=` +
+        encodeURIComponent(error.message)
+    );
+  }
+
+  revalidatePath("/dashboard/tasks");
+  redirect("/dashboard/tasks");
+}
+
 export async function deleteTask(formData: FormData) {
   const supabase = await createClient();
   const {

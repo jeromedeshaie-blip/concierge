@@ -18,7 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export function TaskCardActions({
   taskId,
@@ -39,6 +40,12 @@ export function TaskCardActions({
           <span className="sr-only">Actions</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            render={<Link href={`/dashboard/tasks/${taskId}`} />}
+          >
+            <Pencil className="size-4" />
+            Modifier
+          </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setAlertOpen(true)}
