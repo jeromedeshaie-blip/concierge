@@ -2,13 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
-
-const roleLabels: Record<string, string> = {
-  admin: "Administrateur",
-  owner: "Propriétaire",
-  manager: "Gestionnaire",
-  cleaner: "Personnel de ménage",
-};
+import { roleLabels } from "@/lib/types/profile";
 
 export default async function DashboardLayout({
   children,
@@ -34,7 +28,7 @@ export default async function DashboardLayout({
     fullName:
       profile?.full_name || user.user_metadata?.full_name || "Utilisateur",
     email: user.email || "",
-    role: roleLabels[profile?.role] || profile?.role || "—",
+    role: roleLabels[profile?.role as keyof typeof roleLabels] || profile?.role || "—",
     avatarUrl: profile?.avatar_url || null,
   };
 
