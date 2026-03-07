@@ -31,6 +31,7 @@ const pageLabels: Record<string, string> = {
   tasks: "Tâches",
   team: "Équipe",
   settings: "Paramètres",
+  new: "Ajouter",
 };
 
 interface HeaderUser {
