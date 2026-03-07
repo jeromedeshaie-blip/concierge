@@ -56,6 +56,55 @@ export async function inviteMember(formData: FormData) {
   redirect("/dashboard/team");
 }
 
+export async function updateMember(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    redirect("/dashboard/team");
+  }
+
+  const memberId = (formData.get("member_id") as string)?.trim();
+  const full_name = (formData.get("full_name") as string)?.trim();
+  const role = (formData.get("role") as string)?.trim();
+
+  if (!memberId || !full_name || !role) {
+    redirect(
+      `/dashboard/team/${memberId}?error=` +
+        encodeURIComponent("Nom et rôle sont obligatoires.")
+    );
+  }
+
+  const phone = (formData.get("phone") as string)?.trim() || null;
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ full_name, phone, role })
+    .eq("id", memberId);
+
+  if (error) {
+    redirect(
+      `/dashboard/team/${memberId}?error=` +
+        encodeURIComponent(error.message)
+    );
+  }
+
+  revalidatePath("/dashboard/team");
+  redirect("/dashboard/team");
+}
+
 export async function deleteMember(formData: FormData) {
   const supabase = await createClient();
   const {
