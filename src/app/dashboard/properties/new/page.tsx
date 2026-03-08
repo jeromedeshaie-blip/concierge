@@ -44,7 +44,7 @@ export default async function NewPropertyPage({
     const { data } = await supabase
       .from("profiles")
       .select("id, full_name")
-      .eq("role", "owner")
+      .in("role", ["admin", "owner"])
       .is("deleted_at", null)
       .order("full_name");
     owners = data || [];
