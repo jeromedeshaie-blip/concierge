@@ -41,7 +41,7 @@ BEGIN
       )), '[]'::json)
       FROM bookings b
       JOIN properties p ON b.property_id = p.id
-      WHERE b.check_in = CURRENT_DATE::text
+      WHERE b.check_in::date = CURRENT_DATE
       AND b.status = 'confirmed'
       AND b.deleted_at IS NULL
     ),
@@ -54,7 +54,7 @@ BEGIN
       )), '[]'::json)
       FROM bookings b
       JOIN properties p ON b.property_id = p.id
-      WHERE b.check_out = CURRENT_DATE::text
+      WHERE b.check_out::date = CURRENT_DATE
       AND b.status = 'confirmed'
       AND b.deleted_at IS NULL
     )
