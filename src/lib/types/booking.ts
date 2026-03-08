@@ -10,6 +10,7 @@ export interface Booking {
   status: "confirmed" | "cancelled" | "completed";
   source: "airbnb" | "booking" | "direct" | "other";
   total_amount: number | null;
+  external_uid: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

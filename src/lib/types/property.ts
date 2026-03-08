@@ -7,6 +7,9 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   max_guests: number;
+  ical_airbnb_url: string | null;
+  ical_booking_url: string | null;
+  ical_last_sync: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
