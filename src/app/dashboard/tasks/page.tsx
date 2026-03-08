@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Building2, User, CalendarDays, Clock } from "lucide-react";
 import { TaskCardActions } from "./delete-task-button";
+import { FilterBar } from "@/components/filter-bar";
 import type { TaskWithRelations } from "@/lib/types/task";
 import {
   typeLabels,
@@ -35,9 +36,15 @@ const priorityVariant: Record<string, "default" | "destructive" | "outline" | "s
 export default async function TasksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    q?: string;
+    type?: string;
+    status?: string;
+    priority?: string;
+  }>;
 }) {
-  const { error } = await searchParams;
+  const { error, q, type, status, priority } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -55,14 +62,29 @@ export default async function TasksPage({
   const canDelete =
     profile?.role === "admin" || profile?.role === "manager";
 
-  const { data } = await supabase
+  let query = supabase
     .from("tasks")
     .select("*, properties(name), profiles(full_name), bookings(guest_name)")
     .is("deleted_at", null)
     .order("due_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
 
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (type) {
+    query = query.eq("type", type);
+  }
+  if (status) {
+    query = query.eq("status", status);
+  }
+  if (priority) {
+    query = query.eq("priority", priority);
+  }
+
+  const { data } = await query;
   const tasks = (data as TaskWithRelations[]) || [];
+  const hasFilters = !!(q || type || status || priority);
 
   return (
     <div>
@@ -83,6 +105,36 @@ export default async function TasksPage({
         )}
       </div>
 
+      <FilterBar
+        searchPlaceholder="Rechercher par titre…"
+        filters={[
+          {
+            paramKey: "type",
+            label: "Tous les types",
+            options: Object.entries(typeLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+          {
+            paramKey: "status",
+            label: "Tous les statuts",
+            options: Object.entries(taskStatusLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+          {
+            paramKey: "priority",
+            label: "Toutes les priorités",
+            options: Object.entries(priorityLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+        ]}
+      />
+
       {error && (
         <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
@@ -92,9 +144,11 @@ export default async function TasksPage({
       {tasks.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
-            Aucune tâche pour le moment.
+            {hasFilters
+              ? "Aucun résultat pour ces filtres."
+              : "Aucune tâche pour le moment."}
           </p>
-          {canCreate && (
+          {!hasFilters && canCreate && (
             <Link
               href="/dashboard/tasks/new"
               className="mt-4 inline-block"

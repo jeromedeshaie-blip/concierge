@@ -11,14 +11,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, MapPin, BedDouble, Bath, Users } from "lucide-react";
 import { PropertyCardActions } from "./delete-property-button";
+import { FilterBar } from "@/components/filter-bar";
 import type { Property, PropertyWithOwner } from "@/lib/types/property";
 
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, q } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -36,20 +37,29 @@ export default async function PropertiesPage({
   const canDelete = isAdmin || profile?.role === "owner";
 
   let properties: Property[] | PropertyWithOwner[] = [];
+  const hasFilters = !!q;
 
   if (isAdmin) {
-    const { data } = await supabase
+    let query = supabase
       .from("properties")
       .select("*, profiles(full_name)")
       .is("deleted_at", null)
       .order("created_at", { ascending: false });
+    if (q) {
+      query = query.or(`name.ilike.%${q}%,address.ilike.%${q}%`);
+    }
+    const { data } = await query;
     properties = (data as PropertyWithOwner[]) || [];
   } else {
-    const { data } = await supabase
+    let query = supabase
       .from("properties")
       .select("*")
       .is("deleted_at", null)
       .order("created_at", { ascending: false });
+    if (q) {
+      query = query.or(`name.ilike.%${q}%,address.ilike.%${q}%`);
+    }
+    const { data } = await query;
     properties = (data as Property[]) || [];
   }
 
@@ -72,6 +82,8 @@ export default async function PropertiesPage({
         )}
       </div>
 
+      <FilterBar searchPlaceholder="Rechercher par nom ou adresse…" />
+
       {error && (
         <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
@@ -81,9 +93,11 @@ export default async function PropertiesPage({
       {properties.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
-            Aucune propriété pour le moment.
+            {hasFilters
+              ? "Aucun résultat pour ces filtres."
+              : "Aucune propriété pour le moment."}
           </p>
-          {canCreate && (
+          {!hasFilters && canCreate && (
             <Link
               href="/dashboard/properties/new"
               className="mt-4 inline-block"

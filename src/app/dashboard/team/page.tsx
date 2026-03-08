@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Mail, Phone } from "lucide-react";
 import { MemberCardActions } from "./delete-member-button";
+import { FilterBar } from "@/components/filter-bar";
 import type { Profile } from "@/lib/types/profile";
 import { roleLabels } from "@/lib/types/profile";
 
@@ -24,9 +25,9 @@ const roleVariant: Record<string, "default" | "destructive" | "outline" | "secon
 export default async function TeamPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; role?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, q, role } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -41,13 +42,22 @@ export default async function TeamPage({
 
   const canManage = profile?.role === "admin";
 
-  const { data } = await supabase
+  let query = supabase
     .from("profiles")
     .select("*")
     .is("deleted_at", null)
     .order("full_name", { ascending: true });
 
+  if (q) {
+    query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
+  }
+  if (role) {
+    query = query.eq("role", role);
+  }
+
+  const { data } = await query;
   const members = (data as Profile[]) || [];
+  const hasFilters = !!(q || role);
 
   return (
     <div>
@@ -68,6 +78,20 @@ export default async function TeamPage({
         )}
       </div>
 
+      <FilterBar
+        searchPlaceholder="Rechercher par nom ou email…"
+        filters={[
+          {
+            paramKey: "role",
+            label: "Tous les rôles",
+            options: Object.entries(roleLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+        ]}
+      />
+
       {error && (
         <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
@@ -77,9 +101,11 @@ export default async function TeamPage({
       {members.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
-            Aucun membre pour le moment.
+            {hasFilters
+              ? "Aucun résultat pour ces filtres."
+              : "Aucun membre pour le moment."}
           </p>
-          {canManage && (
+          {!hasFilters && canManage && (
             <Link
               href="/dashboard/team/new"
               className="mt-4 inline-block"

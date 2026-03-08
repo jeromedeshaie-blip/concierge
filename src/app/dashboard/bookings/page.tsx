@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Building2, CalendarDays, Users } from "lucide-react";
 import { BookingCardActions } from "./delete-booking-button";
+import { FilterBar } from "@/components/filter-bar";
 import type { BookingWithProperty } from "@/lib/types/booking";
 import { statusLabels, sourceLabels } from "@/lib/types/booking";
 
@@ -23,9 +24,14 @@ const statusVariant: Record<string, "default" | "destructive" | "outline"> = {
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    q?: string;
+    status?: string;
+    source?: string;
+  }>;
 }) {
-  const { error } = await searchParams;
+  const { error, q, status, source } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -43,13 +49,25 @@ export default async function BookingsPage({
   const canDelete =
     profile?.role === "admin" || profile?.role === "manager";
 
-  const { data } = await supabase
+  let query = supabase
     .from("bookings")
     .select("*, properties(name)")
     .is("deleted_at", null)
     .order("check_in", { ascending: false });
 
+  if (q) {
+    query = query.ilike("guest_name", `%${q}%`);
+  }
+  if (status) {
+    query = query.eq("status", status);
+  }
+  if (source) {
+    query = query.eq("source", source);
+  }
+
+  const { data } = await query;
   const bookings = (data as BookingWithProperty[]) || [];
+  const hasFilters = !!(q || status || source);
 
   return (
     <div>
@@ -70,6 +88,28 @@ export default async function BookingsPage({
         )}
       </div>
 
+      <FilterBar
+        searchPlaceholder="Rechercher par nom d'hôte…"
+        filters={[
+          {
+            paramKey: "status",
+            label: "Tous les statuts",
+            options: Object.entries(statusLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+          {
+            paramKey: "source",
+            label: "Toutes les sources",
+            options: Object.entries(sourceLabels).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          },
+        ]}
+      />
+
       {error && (
         <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
@@ -79,9 +119,11 @@ export default async function BookingsPage({
       {bookings.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
-            Aucune réservation pour le moment.
+            {hasFilters
+              ? "Aucun résultat pour ces filtres."
+              : "Aucune réservation pour le moment."}
           </p>
-          {canCreate && (
+          {!hasFilters && canCreate && (
             <Link
               href="/dashboard/bookings/new"
               className="mt-4 inline-block"
