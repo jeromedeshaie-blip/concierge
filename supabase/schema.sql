@@ -142,6 +142,24 @@ RETURNS user_role AS $$
   SELECT role FROM profiles WHERE id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
+-- Helpers pour eviter la recursion RLS entre tables
+-- (les subqueries dans les policies doivent bypasser RLS)
+
+CREATE OR REPLACE FUNCTION get_owned_property_ids()
+RETURNS SETOF UUID AS $$
+  SELECT id FROM properties WHERE owner_id = auth.uid() AND deleted_at IS NULL;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+CREATE OR REPLACE FUNCTION get_assigned_task_property_ids()
+RETURNS SETOF UUID AS $$
+  SELECT DISTINCT property_id FROM tasks WHERE assigned_to = auth.uid() AND deleted_at IS NULL;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+CREATE OR REPLACE FUNCTION get_assigned_task_booking_ids()
+RETURNS SETOF UUID AS $$
+  SELECT DISTINCT booking_id FROM tasks WHERE assigned_to = auth.uid() AND deleted_at IS NULL AND booking_id IS NOT NULL;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 -- -------------------------------------------------------
 -- RLS : profiles
 -- -------------------------------------------------------
@@ -192,10 +210,7 @@ CREATE POLICY properties_cleaner_select ON properties
   FOR SELECT USING (
     get_user_role() = 'cleaner'
     AND deleted_at IS NULL
-    AND id IN (
-      SELECT property_id FROM tasks
-      WHERE assigned_to = auth.uid() AND deleted_at IS NULL
-    )
+    AND id IN (SELECT get_assigned_task_property_ids())
   );
 
 -- -------------------------------------------------------
@@ -212,9 +227,7 @@ CREATE POLICY bookings_owner_select ON bookings
   FOR SELECT USING (
     get_user_role() = 'owner'
     AND deleted_at IS NULL
-    AND property_id IN (
-      SELECT id FROM properties WHERE owner_id = auth.uid() AND deleted_at IS NULL
-    )
+    AND property_id IN (SELECT get_owned_property_ids())
   );
 
 -- Manager : CRUD sur tous les bookings actifs
@@ -229,10 +242,7 @@ CREATE POLICY bookings_cleaner_select ON bookings
   FOR SELECT USING (
     get_user_role() = 'cleaner'
     AND deleted_at IS NULL
-    AND id IN (
-      SELECT booking_id FROM tasks
-      WHERE assigned_to = auth.uid() AND deleted_at IS NULL
-    )
+    AND id IN (SELECT get_assigned_task_booking_ids())
   );
 
 -- -------------------------------------------------------
@@ -249,9 +259,7 @@ CREATE POLICY tasks_owner_select ON tasks
   FOR SELECT USING (
     get_user_role() = 'owner'
     AND deleted_at IS NULL
-    AND property_id IN (
-      SELECT id FROM properties WHERE owner_id = auth.uid() AND deleted_at IS NULL
-    )
+    AND property_id IN (SELECT get_owned_property_ids())
   );
 
 -- Manager : CRUD sur toutes les taches actives
