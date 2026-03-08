@@ -9,7 +9,12 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, CalendarDays, ClipboardList, Users } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  ClipboardList,
+  Percent,
+} from "lucide-react";
 import { statusLabels, sourceLabels } from "@/lib/types/booking";
 import { taskStatusLabels, priorityLabels } from "@/lib/types/task";
 import type { BookingWithProperty } from "@/lib/types/booking";
@@ -21,7 +26,10 @@ const statusVariant: Record<string, "default" | "destructive" | "outline"> = {
   completed: "outline",
 };
 
-const priorityVariant: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
+const priorityVariant: Record<
+  string,
+  "default" | "destructive" | "outline" | "secondary"
+> = {
   low: "outline",
   medium: "secondary",
   high: "default",
@@ -44,40 +52,56 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
+  const today = new Date().toISOString().split("T")[0];
+  const weekEnd = new Date(Date.now() + 7 * 86_400_000)
+    .toISOString()
+    .split("T")[0];
+
   const [
     { count: propertiesCount },
-    { count: bookingsCount },
-    { count: tasksCount },
-    { count: teamCount },
+    { data: occupiedProperties },
+    { count: weekCheckInsCount },
+    { count: pendingTasksCount },
     { data: upcomingBookings },
     { data: pendingTasks },
   ] = await Promise.all([
+    // Total properties
     supabase
       .from("properties")
       .select("*", { count: "exact", head: true })
       .is("deleted_at", null),
+    // Properties with an active booking today (for occupancy rate)
+    supabase
+      .from("bookings")
+      .select("property_id")
+      .is("deleted_at", null)
+      .eq("status", "confirmed")
+      .lte("check_in", today)
+      .gte("check_out", today),
+    // Check-ins this week
     supabase
       .from("bookings")
       .select("*", { count: "exact", head: true })
       .is("deleted_at", null)
-      .eq("status", "confirmed"),
+      .eq("status", "confirmed")
+      .gte("check_in", today)
+      .lte("check_in", weekEnd),
+    // Pending tasks
     supabase
       .from("tasks")
       .select("*", { count: "exact", head: true })
       .is("deleted_at", null)
       .in("status", ["pending", "in_progress"]),
-    supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true })
-      .is("deleted_at", null),
+    // Upcoming bookings list (next 5)
     supabase
       .from("bookings")
       .select("*, properties(name)")
       .is("deleted_at", null)
       .eq("status", "confirmed")
-      .gte("check_out", new Date().toISOString().split("T")[0])
+      .gte("check_out", today)
       .order("check_in", { ascending: true })
       .limit(5),
+    // Pending tasks list (next 5)
     supabase
       .from("tasks")
       .select("*, properties(name), profiles(full_name)")
@@ -87,30 +111,39 @@ export default async function DashboardPage() {
       .limit(5),
   ]);
 
+  const totalProps = propertiesCount ?? 0;
+  const occupiedCount = new Set(
+    (occupiedProperties ?? []).map(
+      (b: { property_id: string }) => b.property_id
+    )
+  ).size;
+  const occupancyRate =
+    totalProps > 0 ? Math.round((occupiedCount / totalProps) * 100) : 0;
+
   const stats = [
     {
       label: "Propriétés",
-      value: propertiesCount ?? 0,
+      value: totalProps,
       icon: Building2,
       href: "/dashboard/properties",
     },
     {
-      label: "Réservations actives",
-      value: bookingsCount ?? 0,
+      label: "Taux d'occupation",
+      value: `${occupancyRate}%`,
+      icon: Percent,
+      href: "/dashboard/bookings",
+    },
+    {
+      label: "Arrivées cette semaine",
+      value: weekCheckInsCount ?? 0,
       icon: CalendarDays,
       href: "/dashboard/bookings",
     },
     {
       label: "Tâches en cours",
-      value: tasksCount ?? 0,
+      value: pendingTasksCount ?? 0,
       icon: ClipboardList,
       href: "/dashboard/tasks",
-    },
-    {
-      label: "Membres",
-      value: teamCount ?? 0,
-      icon: Users,
-      href: "/dashboard/team",
     },
   ];
 
@@ -174,7 +207,9 @@ export default async function DashboardPage() {
                           {booking.properties.name}
                         </p>
                       </div>
-                      <Badge variant={statusVariant[booking.status] ?? "default"}>
+                      <Badge
+                        variant={statusVariant[booking.status] ?? "default"}
+                      >
                         {statusLabels[booking.status]}
                       </Badge>
                     </div>
@@ -243,7 +278,8 @@ export default async function DashboardPage() {
                     </div>
                     {task.due_date && (
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Échéance : {new Date(task.due_date).toLocaleDateString("fr-CH")}
+                        Échéance :{" "}
+                        {new Date(task.due_date).toLocaleDateString("fr-CH")}
                       </p>
                     )}
                   </Link>
