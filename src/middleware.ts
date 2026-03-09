@@ -1,11 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+
+const handleI18n = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  // 1. Run i18n middleware (handles locale detection & rewriting)
+  const response = handleI18n(request);
 
+  // 2. Create Supabase client using the i18n response
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -15,53 +19,52 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            response.cookies.set(name, value, options)
           );
         },
       },
     }
   );
 
-  // Refresh the session to keep it alive
-  const { data: { user } } = await supabase.auth.getUser();
+  // 3. Refresh the session
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const publicPaths = ["/login", "/signup", "/auth/callback"];
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  // 4. Strip locale prefix to check route
+  const pathname = request.nextUrl.pathname;
+  const pathnameWithoutLocale =
+    pathname.replace(/^\/(en|de)/, "") || "/";
 
-  // Redirect unauthenticated users to login
+  const publicPaths = ["/login", "/signup", "/auth/callback", "/"];
+  const isPublicPath =
+    publicPaths.includes(pathnameWithoutLocale) ||
+    pathnameWithoutLocale.startsWith("/auth/");
+
+  // 5. Redirect unauthenticated users to login
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from login/signup
-  if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
+  // 6. Redirect authenticated users away from login/signup
+  if (
+    user &&
+    (pathnameWithoutLocale === "/login" ||
+      pathnameWithoutLocale === "/signup")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api|auth/callback|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

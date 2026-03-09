@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import type { TodayMovements } from "@/lib/actions/dashboard";
 
 interface TodayWidgetProps {
   movements: TodayMovements;
 }
 
-export function TodayWidget({ movements }: TodayWidgetProps) {
+export async function TodayWidget({ movements }: TodayWidgetProps) {
+  const t = await getTranslations("dashboard.today");
   const arrivals = movements.arrivals ?? [];
   const departures = movements.departures ?? [];
 
@@ -16,12 +18,14 @@ export function TodayWidget({ movements }: TodayWidgetProps) {
         <CardHeader className="flex flex-row items-center gap-2 pb-2">
           <ArrowDownToLine className="size-4 text-green-600" />
           <CardTitle className="text-sm">
-            Arrivées aujourd&apos;hui ({arrivals.length})
+            {t("arrivals")} ({arrivals.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {arrivals.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucune arrivée</p>
+            <p className="text-sm text-muted-foreground">
+              {t("no_arrivals")}
+            </p>
           ) : (
             <ul className="space-y-1">
               {arrivals.map((a) => (
@@ -42,12 +46,14 @@ export function TodayWidget({ movements }: TodayWidgetProps) {
         <CardHeader className="flex flex-row items-center gap-2 pb-2">
           <ArrowUpFromLine className="size-4 text-orange-500" />
           <CardTitle className="text-sm">
-            Départs aujourd&apos;hui ({departures.length})
+            {t("departures")} ({departures.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {departures.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun départ</p>
+            <p className="text-sm text-muted-foreground">
+              {t("no_departures")}
+            </p>
           ) : (
             <ul className="space-y-1">
               {departures.map((d) => (

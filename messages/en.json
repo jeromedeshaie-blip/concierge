@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "properties": "Properties",
+    "bookings": "Bookings",
+    "tasks": "Tasks",
+    "team": "Team",
+    "settings": "Settings",
+    "logout": "Sign out",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}.",
+    "kpi": {
+      "properties": "Active properties",
+      "bookings": "Active bookings",
+      "tasks": "Pending tasks",
+      "revenue": "Monthly revenue"
+    },
+    "chart": {
+      "title": "Occupancy rate — next 7 days",
+      "occupation": "Occupancy"
+    },
+    "today": {
+      "title": "Today's movements",
+      "arrivals": "Arrivals today",
+      "departures": "Departures today",
+      "no_arrivals": "No arrivals",
+      "no_departures": "No departures"
+    }
+  },
+  "properties": {
+    "title": "Properties",
+    "subtitle": "Manage your properties.",
+    "add": "Add",
+    "add_long": "Add a property",
+    "search": "Search by name or address…",
+    "empty": "No properties yet.",
+    "empty_filtered": "No results for these filters.",
+    "owner": "Owner",
+    "rooms": "{count} br.",
+    "bathrooms": "{count} ba.",
+    "guests": "{count} guests"
+  },
+  "bookings": {
+    "title": "Bookings",
+    "subtitle": "Manage bookings.",
+    "add": "Add",
+    "add_long": "Add a booking",
+    "search": "Search by guest name…",
+    "empty": "No bookings yet.",
+    "empty_filtered": "No results for these filters.",
+    "all_statuses": "All statuses",
+    "all_sources": "All sources",
+    "travelers": "{count} traveler",
+    "travelers_plural": "{count} travelers"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Manage tasks.",
+    "add": "Add",
+    "add_long": "Add a task",
+    "search": "Search by title…",
+    "empty": "No tasks yet.",
+    "empty_filtered": "No results for these filters.",
+    "all_types": "All types",
+    "all_statuses": "All statuses",
+    "all_priorities": "All priorities",
+    "due": "Due"
+  },
+  "team": {
+    "title": "Team",
+    "subtitle": "Manage the team.",
+    "invite": "Invite",
+    "invite_long": "Invite a member",
+    "search": "Search by name or email…",
+    "empty": "No members yet.",
+    "empty_filtered": "No results for these filters.",
+    "all_roles": "All roles"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "loading": "Loading…",
+    "error": "An error occurred",
+    "delete": "Delete"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your personal information and password.",
+    "profile_title": "Personal information",
+    "profile_subtitle": "Update your name and contact details.",
+    "full_name": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "save": "Save",
+    "password_title": "Change password",
+    "password_subtitle": "Choose a new password with at least 6 characters.",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "change_password": "Change password"
+  },
+  "auth": {
+    "login": "Sign in",
+    "login_subtitle": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "no_account": "No account yet?",
+    "create_account": "Create account",
+    "signup_title": "Create an account",
+    "signup_subtitle": "Join NendazTech Concierge",
+    "full_name": "Full name",
+    "role": "Role",
+    "has_account": "Already have an account?",
+    "owner": "Owner",
+    "manager": "Manager",
+    "cleaner": "Cleaning staff"
+  }
+}

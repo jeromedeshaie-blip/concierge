@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "properties": "Propriétés",
+    "bookings": "Réservations",
+    "tasks": "Tâches",
+    "team": "Équipe",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter",
+    "profile": "Profil"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue, {name}.",
+    "kpi": {
+      "properties": "Propriétés actives",
+      "bookings": "Réservations en cours",
+      "tasks": "Tâches à faire",
+      "revenue": "Revenus du mois"
+    },
+    "chart": {
+      "title": "Taux d'occupation — 7 prochains jours",
+      "occupation": "Occupation"
+    },
+    "today": {
+      "title": "Mouvements du jour",
+      "arrivals": "Arrivées aujourd'hui",
+      "departures": "Départs aujourd'hui",
+      "no_arrivals": "Aucune arrivée",
+      "no_departures": "Aucun départ"
+    }
+  },
+  "properties": {
+    "title": "Propriétés",
+    "subtitle": "Gestion de vos propriétés.",
+    "add": "Ajouter",
+    "add_long": "Ajouter une propriété",
+    "search": "Rechercher par nom ou adresse…",
+    "empty": "Aucune propriété pour le moment.",
+    "empty_filtered": "Aucun résultat pour ces filtres.",
+    "owner": "Propriétaire",
+    "rooms": "{count} ch.",
+    "bathrooms": "{count} sdb",
+    "guests": "{count} pers."
+  },
+  "bookings": {
+    "title": "Réservations",
+    "subtitle": "Gestion des réservations.",
+    "add": "Ajouter",
+    "add_long": "Ajouter une réservation",
+    "search": "Rechercher par nom d'hôte…",
+    "empty": "Aucune réservation pour le moment.",
+    "empty_filtered": "Aucun résultat pour ces filtres.",
+    "all_statuses": "Tous les statuts",
+    "all_sources": "Toutes les sources",
+    "travelers": "{count} voyageur",
+    "travelers_plural": "{count} voyageurs"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "subtitle": "Gestion des tâches.",
+    "add": "Ajouter",
+    "add_long": "Ajouter une tâche",
+    "search": "Rechercher par titre…",
+    "empty": "Aucune tâche pour le moment.",
+    "empty_filtered": "Aucun résultat pour ces filtres.",
+    "all_types": "Tous les types",
+    "all_statuses": "Tous les statuts",
+    "all_priorities": "Toutes les priorités",
+    "due": "Échéance"
+  },
+  "team": {
+    "title": "Équipe",
+    "subtitle": "Gestion de l'équipe.",
+    "invite": "Inviter",
+    "invite_long": "Inviter un membre",
+    "search": "Rechercher par nom ou email…",
+    "empty": "Aucun membre pour le moment.",
+    "empty_filtered": "Aucun résultat pour ces filtres.",
+    "all_roles": "Tous les rôles"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "back": "Retour",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "delete": "Supprimer"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez vos informations personnelles et votre mot de passe.",
+    "profile_title": "Informations personnelles",
+    "profile_subtitle": "Modifiez votre nom et vos coordonnées.",
+    "full_name": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone",
+    "role": "Rôle",
+    "save": "Enregistrer",
+    "password_title": "Changer le mot de passe",
+    "password_subtitle": "Choisissez un nouveau mot de passe d'au moins 6 caractères.",
+    "new_password": "Nouveau mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "change_password": "Changer le mot de passe"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "login_subtitle": "Connectez-vous à votre compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "no_account": "Pas encore de compte ?",
+    "create_account": "Créer un compte",
+    "signup_title": "Créer un compte",
+    "signup_subtitle": "Rejoignez NendazTech Concierge",
+    "full_name": "Nom complet",
+    "role": "Rôle",
+    "has_account": "Déjà un compte ?",
+    "owner": "Propriétaire",
+    "manager": "Gestionnaire",
+    "cleaner": "Personnel de ménage"
+  }
+}

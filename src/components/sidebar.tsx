@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -18,13 +19,13 @@ import {
   Menu,
 } from "lucide-react";
 
-const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Propriétés", href: "/dashboard/properties", icon: Building2 },
-  { label: "Réservations", href: "/dashboard/bookings", icon: CalendarDays },
-  { label: "Tâches", href: "/dashboard/tasks", icon: ClipboardList },
-  { label: "Équipe", href: "/dashboard/team", icon: Users },
-  { label: "Paramètres", href: "/dashboard/settings", icon: Settings },
+const navKeys = [
+  { key: "dashboard" as const, href: "/dashboard", icon: LayoutDashboard },
+  { key: "properties" as const, href: "/dashboard/properties", icon: Building2 },
+  { key: "bookings" as const, href: "/dashboard/bookings", icon: CalendarDays },
+  { key: "tasks" as const, href: "/dashboard/tasks", icon: ClipboardList },
+  { key: "team" as const, href: "/dashboard/team", icon: Users },
+  { key: "settings" as const, href: "/dashboard/settings", icon: Settings },
 ];
 
 interface SidebarUser {
@@ -42,6 +43,7 @@ function SidebarContent({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <div className="flex h-full flex-col">
@@ -57,10 +59,12 @@ function SidebarContent({
       </div>
       <Separator />
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
+        {navKeys.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            pathname.endsWith(item.href) ||
+            (item.href !== "/dashboard" &&
+              pathname.includes(item.href));
           return (
             <Link
               key={item.href}
@@ -74,7 +78,7 @@ function SidebarContent({
               )}
             >
               <item.icon className="size-4" />
-              {item.label}
+              {t(item.key)}
             </Link>
           );
         })}
@@ -105,7 +109,6 @@ export function Sidebar({ user }: { user: SidebarUser }) {
 
   return (
     <>
-      {/* Mobile trigger */}
       <Button
         variant="ghost"
         size="icon"
@@ -116,12 +119,10 @@ export function Sidebar({ user }: { user: SidebarUser }) {
         <span className="sr-only">Menu</span>
       </Button>
 
-      {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-sidebar md:flex md:flex-col">
         <SidebarContent user={user} />
       </aside>
 
-      {/* Mobile sidebar */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
           <SheetTitle className="sr-only">Navigation</SheetTitle>

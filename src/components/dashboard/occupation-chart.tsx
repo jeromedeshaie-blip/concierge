@@ -14,14 +14,16 @@ import type { OccupationDay } from "@/lib/actions/dashboard";
 
 interface OccupationChartProps {
   data: OccupationDay[];
+  title: string;
+  tooltipLabel: string;
 }
 
-export function OccupationChart({ data }: OccupationChartProps) {
+export function OccupationChart({ data, title, tooltipLabel }: OccupationChartProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base">
-          Taux d&apos;occupation — 7 prochains jours
+          {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -31,7 +33,7 @@ export function OccupationChart({ data }: OccupationChartProps) {
             <XAxis dataKey="label" tick={{ fontSize: 12 }} />
             <YAxis unit="%" domain={[0, 100]} tick={{ fontSize: 12 }} />
             <Tooltip
-              formatter={(value) => [`${value}%`, "Occupation"]}
+              formatter={(value) => [`${value}%`, tooltipLabel]}
             />
             <Bar
               dataKey="occupation_pct"
