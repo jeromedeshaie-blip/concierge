@@ -4,6 +4,7 @@
     "properties": "Propriétés",
     "bookings": "Réservations",
     "calendar": "Calendrier",
+    "cleaning": "Ménages",
     "tasks": "Tâches",
     "team": "Équipe",
     "settings": "Paramètres",
@@ -91,6 +92,11 @@
   "calendar": {
     "title": "Calendrier",
     "subtitle": "Vue d'ensemble de toutes vos réservations"
+  },
+  "cleaning": {
+    "title": "Ménages",
+    "subtitle": "Gérez les ménages et check-lists de votre équipe",
+    "generate": "Générer ménages du jour"
   },
   "settings": {
     "title": "Paramètres",

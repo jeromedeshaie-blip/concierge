@@ -4,6 +4,7 @@
     "properties": "Properties",
     "bookings": "Bookings",
     "calendar": "Calendar",
+    "cleaning": "Cleaning",
     "tasks": "Tasks",
     "team": "Team",
     "settings": "Settings",
@@ -91,6 +92,11 @@
   "calendar": {
     "title": "Calendar",
     "subtitle": "Overview of all your bookings"
+  },
+  "cleaning": {
+    "title": "Cleaning",
+    "subtitle": "Manage your team's cleaning tasks and checklists",
+    "generate": "Generate today's cleanings"
   },
   "settings": {
     "title": "Settings",

@@ -4,6 +4,7 @@
     "properties": "Immobilien",
     "bookings": "Buchungen",
     "calendar": "Kalender",
+    "cleaning": "Reinigung",
     "tasks": "Aufgaben",
     "team": "Team",
     "settings": "Einstellungen",
@@ -91,6 +92,11 @@
   "calendar": {
     "title": "Kalender",
     "subtitle": "Übersicht aller Ihrer Buchungen"
+  },
+  "cleaning": {
+    "title": "Reinigung",
+    "subtitle": "Verwalten Sie die Reinigungsaufgaben und Checklisten Ihres Teams",
+    "generate": "Heutige Reinigungen generieren"
   },
   "settings": {
     "title": "Einstellungen",

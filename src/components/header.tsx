@@ -31,6 +31,7 @@ const pageLabels: Record<string, string> = {
   properties: "nav.properties",
   bookings: "nav.bookings",
   calendar: "nav.calendar",
+  cleaning: "nav.cleaning",
   tasks: "nav.tasks",
   team: "nav.team",
   settings: "nav.settings",
