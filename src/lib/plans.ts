@@ -1,0 +1,45 @@
+export const PLANS = {
+  free: {
+    name: "Free",
+    price: 0,
+    priceId: null as string | null,
+    maxProperties: 1,
+    maxUsers: 2,
+    features: [
+      "1 propriété",
+      "2 utilisateurs",
+      "Sync iCal",
+      "Dashboard basique",
+    ],
+  },
+  pro: {
+    name: "Pro",
+    price: 49,
+    priceId: process.env.STRIPE_PRO_PRICE_ID ?? null,
+    maxProperties: 10,
+    maxUsers: 5,
+    features: [
+      "10 propriétés",
+      "5 utilisateurs",
+      "Sync iCal Airbnb + Booking",
+      "Dashboard avancé",
+      "Multilingue FR/EN/DE",
+      "Support prioritaire",
+    ],
+  },
+  business: {
+    name: "Business",
+    price: 149,
+    priceId: process.env.STRIPE_BUSINESS_PRICE_ID ?? null,
+    maxProperties: 999,
+    maxUsers: 999,
+    features: [
+      "Propriétés illimitées",
+      "Utilisateurs illimités",
+      "Toutes les fonctionnalités Pro",
+      "API access",
+      "White-label",
+      "Account manager dédié",
+    ],
+  },
+};

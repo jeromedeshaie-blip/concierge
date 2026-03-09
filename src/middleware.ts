@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
   const pathnameWithoutLocale =
     pathname.replace(/^\/(en|de)/, "") || "/";
 
-  const publicPaths = ["/login", "/signup", "/auth/callback", "/"];
+  const publicPaths = ["/login", "/signup", "/auth/callback", "/", "/pricing", "/onboarding"];
   const isPublicPath =
     publicPaths.includes(pathnameWithoutLocale) ||
     pathnameWithoutLocale.startsWith("/auth/");
