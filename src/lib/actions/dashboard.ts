@@ -33,12 +33,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const { data, error } = await supabase.rpc("get_dashboard_stats");
   if (error) {
     console.error("getDashboardStats error:", error);
-    return {
-      total_properties: 0,
-      active_bookings: 0,
-      pending_tasks: 0,
-      revenue_month: 0,
-    };
+    return { total_properties: 0, active_bookings: 0, pending_tasks: 0, revenue_month: 0 };
   }
   return data as DashboardStats;
 }
