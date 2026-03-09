@@ -3,6 +3,7 @@
     "dashboard": "Dashboard",
     "properties": "Propriétés",
     "bookings": "Réservations",
+    "calendar": "Calendrier",
     "tasks": "Tâches",
     "team": "Équipe",
     "settings": "Paramètres",
@@ -86,6 +87,10 @@
     "loading": "Chargement…",
     "error": "Une erreur est survenue",
     "delete": "Supprimer"
+  },
+  "calendar": {
+    "title": "Calendrier",
+    "subtitle": "Vue d'ensemble de toutes vos réservations"
   },
   "settings": {
     "title": "Paramètres",
